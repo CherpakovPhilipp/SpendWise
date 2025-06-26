@@ -23,16 +23,18 @@ export function SidebarNav() {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          <SidebarMenuButton
-            asChild
-            tooltip={item.label}
-            isActive={pathname === item.href}
-          >
-            <Link href={item.href}>
-              <item.icon />
-              <span>{item.label}</span>
-            </Link>
-          </SidebarMenuButton>
+          <Link href={item.href} legacyBehavior passHref>
+            <SidebarMenuButton
+              asChild
+              tooltip={item.label}
+              isActive={pathname === item.href}
+            >
+              <a>
+                <item.icon />
+                <span className="group-data-[state=collapsed]:hidden">{item.label}</span>
+              </a>
+            </SidebarMenuButton>
+          </Link>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>
