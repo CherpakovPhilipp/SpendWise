@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -36,10 +37,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Transaction, categoryIcons } from "@/data/mock";
+import { Transaction } from "@/lib/definitions";
+import { categoryIcons } from "@/data/mock";
 
 const transactionSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   name: z.string().min(2, "Name must be at least 2 characters."),
   amount: z.coerce.number().positive("Amount must be a positive number."),
   type: z.enum(["income", "expense"]),
@@ -50,7 +52,7 @@ const transactionSchema = z.object({
 type EditTransactionSheetProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (transaction: Transaction) => void;
+  onSave: (transaction: Transaction | Omit<Transaction, "id">) => void;
   transaction: Transaction | null;
 };
 
@@ -62,42 +64,49 @@ export function EditTransactionSheet({
 }: EditTransactionSheetProps) {
   const form = useForm<z.infer<typeof transactionSchema>>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
-      id: "",
-      name: "",
-      amount: 0,
-      type: "expense",
-      category: "",
-      date: new Date(),
-    },
   });
 
   React.useEffect(() => {
-    if (transaction) {
-      form.reset({
-        ...transaction,
-        date: new Date(transaction.date),
-      });
-    } else {
-      form.reset();
+    if (isOpen) {
+        if (transaction) {
+        form.reset({
+            ...transaction,
+            date: new Date(transaction.date),
+        });
+        } else {
+        form.reset({
+            id: "",
+            name: "",
+            amount: 0,
+            type: "expense",
+            category: "",
+            date: new Date(),
+        });
+        }
     }
-  }, [transaction, form]);
+  }, [transaction, form, isOpen]);
 
   const onSubmit = (values: z.infer<typeof transactionSchema>) => {
-    onSave({
-      ...values,
-      date: format(values.date, "yyyy-MM-dd"),
-      category: values.category as keyof typeof categoryIcons
-    });
+    const dataToSave = {
+        ...values,
+        date: format(values.date, "yyyy-MM-dd"),
+        category: values.category as keyof typeof categoryIcons
+    };
+    if(values.id) {
+        onSave(dataToSave as Transaction);
+    } else {
+        const { id, ...dataWithoutId } = dataToSave;
+        onSave(dataWithoutId);
+    }
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Edit Transaction</SheetTitle>
+          <SheetTitle>{transaction ? "Edit Transaction" : "Add Transaction"}</SheetTitle>
           <SheetDescription>
-            Update the details of your transaction.
+            {transaction ? "Update the details of your transaction." : "Create a new transaction."}
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
@@ -144,6 +153,27 @@ export function EditTransactionSheet({
                       {Object.keys(categoryIcons).map(category => (
                         <SelectItem key={category} value={category}>{category}</SelectItem>
                       ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="expense">Expense</SelectItem>
+                      <SelectItem value="income">Income</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

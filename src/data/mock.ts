@@ -10,6 +10,7 @@ import {
   Target,
 } from "lucide-react";
 import type { ChartConfig } from "@/components/ui/chart";
+import type { Transaction, Budget } from "@/lib/definitions";
 
 export const categoryIcons = {
   Groceries: ShoppingCart,
@@ -20,15 +21,6 @@ export const categoryIcons = {
   Shopping: Target,
   Other: Receipt,
   Income: Landmark,
-};
-
-export type Transaction = {
-  id: string;
-  name: string;
-  category: keyof typeof categoryIcons;
-  date: string;
-  amount: number;
-  type: "expense" | "income";
 };
 
 export const transactions: Transaction[] = [
@@ -90,12 +82,6 @@ export const transactions: Transaction[] = [
   },
 ];
 
-export type Budget = {
-  id: string;
-  category: string;
-  spent: number;
-  goal: number;
-};
 
 export const budgets: Budget[] = [
   { id: "bud1", category: "Dining", spent: 350.75, goal: 500 },

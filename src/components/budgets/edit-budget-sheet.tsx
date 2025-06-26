@@ -25,10 +25,10 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Budget } from "@/data/mock";
+import { Budget } from "@/lib/definitions";
 
 const budgetSchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   category: z.string().min(2, "Category must be at least 2 characters."),
   goal: z.coerce.number().positive("Goal must be a positive number."),
   spent: z.coerce.number().min(0, "Spent must be a non-negative number."),
@@ -37,7 +37,7 @@ const budgetSchema = z.object({
 type EditBudgetSheetProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (budget: Budget) => void;
+  onSave: (budget: Budget | Omit<Budget, "id">) => void;
   budget: Budget | null;
 };
 
@@ -67,7 +67,12 @@ export function EditBudgetSheet({
   }, [budget, form, isOpen]);
 
   const onSubmit = (values: z.infer<typeof budgetSchema>) => {
-    onSave(values);
+    if (values.id) {
+        onSave(values as Budget);
+    } else {
+        const { id, ...dataWithoutId } = values;
+        onSave(dataWithoutId);
+    }
   };
 
   return (

@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -15,10 +16,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { transactions as mockTransactions, Transaction } from "@/data/mock";
+import { Transaction } from "@/lib/definitions";
+import { useApp } from "@/context/AppProvider";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function TransactionsPage() {
-  const [transactions, setTransactions] = React.useState(mockTransactions);
+  const { transactions, saveTransaction, deleteTransaction, loading } = useApp();
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -39,31 +42,16 @@ export default function TransactionsPage() {
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedTransaction) {
-      setTransactions(
-        transactions.filter((t) => t.id !== selectedTransaction.id)
-      );
+      await deleteTransaction(selectedTransaction.id);
     }
     setIsDeleteDialogOpen(false);
     setSelectedTransaction(null);
   };
 
-  const handleSave = (updatedTransaction: Transaction) => {
-    if (selectedTransaction) {
-      // Editing existing
-      setTransactions(
-        transactions.map((t) =>
-          t.id === updatedTransaction.id ? updatedTransaction : t
-        )
-      );
-    } else {
-      // Adding new
-      setTransactions([
-        { ...updatedTransaction, id: `txn${Date.now()}` },
-        ...transactions,
-      ]);
-    }
+  const handleSave = async (data: Transaction | Omit<Transaction, "id">) => {
+    await saveTransaction(data);
     setIsEditDialogOpen(false);
     setSelectedTransaction(null);
   };
@@ -72,6 +60,23 @@ export default function TransactionsPage() {
     setIsEditDialogOpen(false);
     setSelectedTransaction(null);
   };
+
+  if (loading) {
+      return (
+        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
+            <div className="flex items-center">
+                <div>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="mt-2 h-4 w-64" />
+                </div>
+                <div className="ml-auto">
+                    <Skeleton className="h-9 w-36" />
+                </div>
+            </div>
+            <Skeleton className="h-[400px] w-full" />
+        </div>
+      )
+  }
 
   return (
     <>

@@ -1,4 +1,6 @@
 
+"use client";
+
 import {
   Card,
   CardContent,
@@ -8,9 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { budgets } from "@/data/mock";
+import { useApp } from "@/context/AppProvider";
 
 export function BudgetGoals() {
+  const { budgets } = useApp();
+
   return (
     <Card className="h-full">
       <CardHeader>

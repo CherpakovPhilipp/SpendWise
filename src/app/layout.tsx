@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -7,11 +8,14 @@ import {
   SidebarContent,
   SidebarInset,
   SidebarFooter,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { SpendWiseLogo } from "@/components/icons";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SidebarFooterNav } from "@/components/layout/sidebar-footer-nav";
+import { AppProvider } from "@/context/AppProvider";
+import { ModeSwitcher } from "@/components/layout/mode-switcher";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,25 +36,35 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <SidebarProvider>
-          <Sidebar>
-            <SidebarHeader>
-              <Link href="/" className="flex items-center gap-2">
-                <SpendWiseLogo className="w-6 h-6 text-primary" />
-                <span className="font-semibold text-lg">SpendWise</span>
-              </Link>
-            </SidebarHeader>
-            <SidebarContent>
-              <SidebarNav />
-            </SidebarContent>
-            <SidebarFooter>
-              <SidebarFooterNav />
-            </SidebarFooter>
-          </Sidebar>
-          <SidebarInset>
-            {children}
-          </SidebarInset>
-        </SidebarProvider>
+        <AppProvider>
+          <SidebarProvider>
+            <Sidebar>
+              <SidebarHeader className="p-2">
+                <div className="flex w-full items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2">
+                        <SpendWiseLogo className="w-6 h-6 text-primary" />
+                        <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
+                    </Link>
+                    <div className="group-data-[collapsible=icon]:hidden">
+                      <ModeSwitcher />
+                    </div>
+                    <div className="md:hidden">
+                       <SidebarTrigger />
+                    </div>
+                </div>
+              </SidebarHeader>
+              <SidebarContent>
+                <SidebarNav />
+              </SidebarContent>
+              <SidebarFooter>
+                <SidebarFooterNav />
+              </SidebarFooter>
+            </Sidebar>
+            <SidebarInset>
+              {children}
+            </SidebarInset>
+          </SidebarProvider>
+        </AppProvider>
         <Toaster />
       </body>
     </html>

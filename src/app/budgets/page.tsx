@@ -16,10 +16,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { budgets as mockBudgets, Budget } from "@/data/mock";
+import { Budget } from "@/lib/definitions";
+import { useApp } from "@/context/AppProvider";
+import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function BudgetsPage() {
-  const [budgets, setBudgets] = React.useState(mockBudgets);
+  const { budgets, saveBudget, deleteBudget, loading } = useApp();
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [selectedBudget, setSelectedBudget] =
@@ -40,31 +43,16 @@ export default function BudgetsPage() {
     setIsDeleteDialogOpen(true);
   };
 
-  const confirmDelete = () => {
+  const confirmDelete = async () => {
     if (selectedBudget) {
-      setBudgets(
-        budgets.filter((b) => b.id !== selectedBudget.id)
-      );
+      await deleteBudget(selectedBudget.id);
     }
     setIsDeleteDialogOpen(false);
     setSelectedBudget(null);
   };
 
-  const handleSave = (updatedBudget: Budget) => {
-    if (selectedBudget) {
-      // Editing existing
-      setBudgets(
-        budgets.map((b) =>
-          b.id === updatedBudget.id ? updatedBudget : b
-        )
-      );
-    } else {
-      // Adding new
-      setBudgets([
-        { ...updatedBudget, spent: 0, id: `bud${Date.now()}` },
-        ...budgets,
-      ]);
-    }
+  const handleSave = async (updatedBudget: Budget | Omit<Budget, "id">) => {
+    await saveBudget(updatedBudget);
     setIsEditDialogOpen(false);
     setSelectedBudget(null);
   };
@@ -73,6 +61,23 @@ export default function BudgetsPage() {
     setIsEditDialogOpen(false);
     setSelectedBudget(null);
   };
+
+  if (loading) {
+      return (
+        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
+            <div className="flex items-center">
+                <div>
+                    <Skeleton className="h-8 w-48" />
+                    <Skeleton className="mt-2 h-4 w-64" />
+                </div>
+                <div className="ml-auto">
+                    <Skeleton className="h-9 w-36" />
+                </div>
+            </div>
+            <Skeleton className="h-[400px] w-full" />
+        </div>
+      )
+  }
 
   return (
     <>
