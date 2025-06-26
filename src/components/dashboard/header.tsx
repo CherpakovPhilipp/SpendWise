@@ -73,7 +73,7 @@ export function Header({ onAdd, transactions }: HeaderProps) {
   };
 
   return (
-    <header className="flex items-center justify-between">
+    <header className="flex flex-wrap items-center justify-between gap-2">
       <div>
         <h1 className="text-2xl font-bold tracking-tight md:text-3xl">
           Dashboard
@@ -82,14 +82,14 @@ export function Header({ onAdd, transactions }: HeaderProps) {
           Here's a summary of your financial activity.
         </p>
       </div>
-      <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" className="hidden sm:flex">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button variant="outline" size="sm">
           <Upload className="mr-2 h-4 w-4" />
           Import
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="sm" className="hidden sm:flex">
+            <Button variant="outline" size="sm">
               <Download className="mr-2 h-4 w-4" />
               Export
             </Button>
