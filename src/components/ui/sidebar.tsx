@@ -1,9 +1,10 @@
+
 "use client"
 
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps, cva } from "class-variance-authority"
-import { Menu } from "lucide-react"
+import { Menu, X } from "lucide-react"
 
 import { useIsMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
@@ -263,7 +264,8 @@ const SidebarTrigger = React.forwardRef<
   React.ElementRef<typeof Button>,
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, state, isMobile } = useSidebar()
+  const isOpen = state === "expanded"
 
   return (
     <Button
@@ -278,7 +280,26 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <Menu />
+      <div className="relative h-4 w-4">
+        {isMobile ? (
+          <Menu className="absolute" />
+        ) : (
+          <>
+            <Menu
+              className={cn(
+                "absolute transition-all duration-300",
+                isOpen ? "rotate-90 scale-0" : "rotate-0 scale-100"
+              )}
+            />
+            <X
+              className={cn(
+                "absolute transition-all duration-300",
+                isOpen ? "rotate-0 scale-100" : "-rotate-90 scale-0"
+              )}
+            />
+          </>
+        )}
+      </div>
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )
@@ -358,7 +379,7 @@ const SidebarHeader = React.forwardRef<
     <div
       ref={ref}
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn("flex flex-col gap-2 p-2 flex-shrink-0", className)}
       {...props}
     />
   )
