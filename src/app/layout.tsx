@@ -47,7 +47,7 @@ export default function RootLayout({
                     </Link>
                     <SidebarTrigger className="hidden md:block" />
                 </div>
-                <div className="flex justify-center group-data-[collapsible=icon]:hidden">
+                <div className="flex justify-end group-data-[collapsible=icon]:hidden">
                     <ModeSwitcher />
                 </div>
               </SidebarHeader>
