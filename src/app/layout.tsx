@@ -45,11 +45,13 @@ export default function RootLayout({
                         <SpendWiseLogo className="w-6 h-6 text-primary" />
                         <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
                     </Link>
-                    <div className="group-data-[collapsible=icon]:hidden">
-                      <ModeSwitcher />
-                    </div>
-                    <div className="md:hidden">
-                       <SidebarTrigger />
+                    <div className="flex items-center gap-2">
+                      <div className="group-data-[collapsible=icon]:hidden">
+                        <ModeSwitcher />
+                      </div>
+                      <div className="hidden md:block">
+                        <SidebarTrigger />
+                      </div>
                     </div>
                 </div>
               </SidebarHeader>
@@ -61,6 +63,13 @@ export default function RootLayout({
               </SidebarFooter>
             </Sidebar>
             <SidebarInset>
+              <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
+                <Link href="/" className="flex items-center gap-2 font-semibold">
+                  <SpendWiseLogo className="h-6 w-6 text-primary" />
+                  <span className="text-lg font-semibold">SpendWise</span>
+                </Link>
+                <SidebarTrigger />
+              </header>
               {children}
             </SidebarInset>
           </SidebarProvider>
