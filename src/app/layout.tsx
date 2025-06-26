@@ -6,7 +6,6 @@ import {
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarInset,
   SidebarFooter,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
@@ -38,36 +37,45 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <AppProvider>
           <SidebarProvider>
-            <Sidebar>
-              <SidebarHeader className="p-2">
-                <div className="flex w-full items-center group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-4">
-                    <Link href="/" className="flex items-center gap-2 mr-auto group-data-[collapsible=icon]:mr-0">
-                        <SpendWiseLogo className="w-6 h-6 text-primary" />
-                        <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
-                    </Link>
-                    <SidebarTrigger className="hidden md:block" />
-                </div>
-                <div className="flex justify-center pt-2 group-data-[collapsible=icon]:hidden">
-                    <ModeSwitcher />
-                </div>
-              </SidebarHeader>
-              <SidebarContent>
-                <SidebarNav />
-              </SidebarContent>
-              <SidebarFooter>
-                <SidebarFooterNav />
-              </SidebarFooter>
-            </Sidebar>
-            <SidebarInset>
-              <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
-                <Link href="/" className="flex items-center gap-2 font-semibold">
-                  <SpendWiseLogo className="h-6 w-6 text-primary" />
-                  <span className="text-lg font-semibold">SpendWise</span>
-                </Link>
-                <SidebarTrigger />
-              </header>
-              {children}
-            </SidebarInset>
+            <div className="flex min-h-screen w-full bg-background">
+              <Sidebar>
+                <SidebarHeader className="p-2">
+                  <div className="flex w-full items-center">
+                      <Link href="/" className="flex items-center gap-2">
+                          <SpendWiseLogo className="w-6 h-6 text-primary" />
+                          <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
+                      </Link>
+                  </div>
+                  <div className="flex justify-center pt-2 group-data-[collapsible=icon]:hidden">
+                      <ModeSwitcher />
+                  </div>
+                </SidebarHeader>
+                <SidebarContent>
+                  <SidebarNav />
+                </SidebarContent>
+                <SidebarFooter>
+                  <SidebarFooterNav />
+                </SidebarFooter>
+              </Sidebar>
+              <div className="flex flex-1 flex-col">
+                <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-inherit px-4">
+                    <div className="flex items-center gap-2">
+                        <SidebarTrigger className="hidden md:block" />
+                        <Link href="/" className="flex items-center gap-2 font-semibold md:hidden">
+                            <SpendWiseLogo className="h-6 w-6 text-primary" />
+                            <span className="text-lg font-semibold">SpendWise</span>
+                        </Link>
+                    </div>
+
+                    <div className="md:hidden">
+                        <SidebarTrigger />
+                    </div>
+                </header>
+                <main className="flex-1">
+                  {children}
+                </main>
+              </div>
+            </div>
           </SidebarProvider>
         </AppProvider>
         <Toaster />
