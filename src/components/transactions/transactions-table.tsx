@@ -19,53 +19,29 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { transactions as mockTransactions, categoryIcons, Transaction } from "@/data/mock";
-import { EditTransactionSheet } from "./edit-transaction-sheet";
+import { categoryIcons, Transaction } from "@/data/mock";
 
-export function TransactionsTable() {
-  const [transactions, setTransactions] = React.useState(mockTransactions);
-  const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
-  const [selectedTransaction, setSelectedTransaction] = React.useState<Transaction | null>(null);
+type TransactionsTableProps = {
+  transactions: Transaction[];
+  onEdit: (transaction: Transaction) => void;
+  onDelete: (transaction: Transaction) => void;
+};
 
-  const handleEdit = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setIsEditDialogOpen(true);
-  };
+export function TransactionsTable({
+  transactions,
+  onEdit,
+  onDelete,
+}: TransactionsTableProps) {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const itemsPerPage = 5;
 
-  const handleDelete = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const confirmDelete = () => {
-    if (selectedTransaction) {
-      setTransactions(transactions.filter((t) => t.id !== selectedTransaction.id));
-    }
-    setIsDeleteDialogOpen(false);
-    setSelectedTransaction(null);
-  };
-  
-  const handleSave = (updatedTransaction: Transaction) => {
-    setTransactions(transactions.map((t) => t.id === updatedTransaction.id ? updatedTransaction : t));
-    setIsEditDialogOpen(false);
-    setSelectedTransaction(null);
-  };
-
-  const handleSheetClose = () => {
-    setIsEditDialogOpen(false);
-    setSelectedTransaction(null);
-  }
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentTransactions = transactions.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+  const totalPages = Math.ceil(transactions.length / itemsPerPage);
 
   return (
     <>
@@ -83,8 +59,9 @@ export function TransactionsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {transactions.map((transaction) => {
-              const Icon = categoryIcons[transaction.category] || categoryIcons.Other;
+            {currentTransactions.map((transaction) => {
+              const Icon =
+                categoryIcons[transaction.category] || categoryIcons.Other;
               return (
                 <TableRow key={transaction.id}>
                   <TableCell>
@@ -94,9 +71,12 @@ export function TransactionsTable() {
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Badge variant="outline" className="flex items-center justify-center gap-2">
-                       <Icon className="h-4 w-4" />
-                       {transaction.category}
+                    <Badge
+                      variant="outline"
+                      className="flex items-center justify-center gap-2"
+                    >
+                      <Icon className="h-4 w-4" />
+                      {transaction.category}
                     </Badge>
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
@@ -113,17 +93,26 @@ export function TransactionsTable() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <Button
+                          aria-haspopup="true"
+                          size="icon"
+                          variant="ghost"
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sr-only">Toggle menu</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem onSelect={() => handleEdit(transaction)}>
+                        <DropdownMenuItem
+                          onSelect={() => onEdit(transaction)}
+                        >
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem onSelect={() => handleDelete(transaction)} className="text-destructive">
+                        <DropdownMenuItem
+                          onSelect={() => onDelete(transaction)}
+                          className="text-destructive"
+                        >
                           Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -135,28 +124,29 @@ export function TransactionsTable() {
           </TableBody>
         </Table>
       </div>
-
-      <EditTransactionSheet 
-        isOpen={isEditDialogOpen}
-        onClose={handleSheetClose}
-        onSave={handleSave}
-        transaction={selectedTransaction}
-      />
-
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this transaction.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <span className="text-sm text-muted-foreground">
+          Page {currentPage} of {totalPages}
+        </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </Button>
+      </div>
     </>
   );
 }

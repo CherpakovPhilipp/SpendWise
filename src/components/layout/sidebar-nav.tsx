@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, List, Target } from "lucide-react";
 
@@ -22,14 +23,18 @@ export function SidebarNav() {
     <SidebarMenu>
       {navItems.map((item) => (
         <SidebarMenuItem key={item.href}>
-          <SidebarMenuButton 
-            href={item.href} 
-            tooltip={item.label} 
-            isActive={pathname === item.href}
-          >
-            <item.icon />
-            {item.label}
-          </SidebarMenuButton>
+          <Link href={item.href} legacyBehavior passHref>
+            <SidebarMenuButton
+              asChild
+              tooltip={item.label}
+              isActive={pathname === item.href}
+            >
+              <a>
+                <item.icon />
+                <span>{item.label}</span>
+              </a>
+            </SidebarMenuButton>
+          </Link>
         </SidebarMenuItem>
       ))}
     </SidebarMenu>

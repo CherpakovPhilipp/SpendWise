@@ -70,7 +70,7 @@ export function SpendingChart() {
                   cursor={false}
                   content={<ChartTooltipContent indicator="dot" />}
                 />
-                <Bar dataKey="amount" fill="var(--color-primary)" radius={8} />
+                <Bar dataKey="amount" fill="hsl(var(--accent))" radius={8} />
               </BarChart>
             ) : (
               <PieChart>
