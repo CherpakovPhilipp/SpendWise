@@ -5,6 +5,7 @@ import * as React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { observer } from "mobx-react-lite";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,28 +26,36 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Budget } from "@/lib/definitions";
+import { useApp } from "@/context/AppProvider";
 
 const budgetSchema = z.object({
   id: z.string().optional(),
   category: z.string().min(2, "Category must be at least 2 characters."),
   goal: z.coerce.number().positive("Goal must be a positive number."),
-  spent: z.coerce.number().min(0, "Spent must be a non-negative number."),
 });
 
 type EditBudgetSheetProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (budget: Budget | Omit<Budget, "id">) => void;
+  onSave: (budget: Budget | Omit<Budget, "id" | "spent">) => void;
   budget: Budget | null;
 };
 
-export function EditBudgetSheet({
+export const EditBudgetSheet = observer(({
   isOpen,
   onClose,
   onSave,
   budget,
-}: EditBudgetSheetProps) {
+}: EditBudgetSheetProps) => {
+  const store = useApp();
   const form = useForm<z.infer<typeof budgetSchema>>({
     resolver: zodResolver(budgetSchema),
   });
@@ -54,13 +63,16 @@ export function EditBudgetSheet({
   React.useEffect(() => {
     if (isOpen) {
         if (budget) {
-            form.reset(budget);
+            form.reset({
+                id: budget.id,
+                category: budget.category,
+                goal: budget.goal,
+            });
         } else {
             form.reset({
                 id: "",
                 category: "",
                 goal: 0,
-                spent: 0,
             });
         }
     }
@@ -68,7 +80,10 @@ export function EditBudgetSheet({
 
   const onSubmit = (values: z.infer<typeof budgetSchema>) => {
     if (values.id) {
-        onSave(values as Budget);
+        onSave({
+            ...budget!,
+            ...values,
+        });
     } else {
         const { id, ...dataWithoutId } = values;
         onSave(dataWithoutId);
@@ -97,9 +112,24 @@ export function EditBudgetSheet({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g. Groceries" {...field} />
-                  </FormControl>
+                   {budget ? (
+                    <FormControl>
+                      <Input readOnly disabled {...field} />
+                    </FormControl>
+                  ) : (
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                        {store.availableBudgetCategories.map(category => (
+                            <SelectItem key={category} value={category}>{category}</SelectItem>
+                        ))}
+                        </SelectContent>
+                    </Select>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -112,19 +142,6 @@ export function EditBudgetSheet({
                   <FormLabel>Goal Amount</FormLabel>
                   <FormControl>
                     <Input type="number" placeholder="500.00" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="spent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Amount Spent</FormLabel>
-                  <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -143,4 +160,4 @@ export function EditBudgetSheet({
       </SheetContent>
     </Sheet>
   );
-}
+});

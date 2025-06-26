@@ -34,6 +34,15 @@ export class AppStore {
     this.loadData();
   }
 
+  recalculateAllBudgetsSpent() {
+    this.budgets.forEach(budget => {
+      const totalSpent = this.transactions
+        .filter(t => t.type === 'expense' && t.category === budget.category)
+        .reduce((acc, t) => acc + t.amount, 0);
+      budget.spent = totalSpent;
+    });
+  }
+
   async loadData() {
     this.loading = true;
     try {
@@ -55,6 +64,7 @@ export class AppStore {
           this.budgets = localBudgets;
         });
       }
+      this.recalculateAllBudgetsSpent();
     } catch (error) {
       console.error("Failed to load data", error);
     } finally {
@@ -104,17 +114,21 @@ export class AppStore {
     }
   }
 
-  async saveBudget(budget: Budget | Omit<Budget, "id">) {
+  async saveBudget(budget: Budget | Omit<Budget, "id" | "spent">) {
     this.loading = true;
     try {
+      // The `spent` property is calculated, so initialize to 0 for saving.
+      // The store's `spent` value will be updated by `recalculateAllBudgetsSpent` after `loadData`.
+      const budgetToSave = { ...budget, spent: 'spent' in budget ? budget.spent : 0 };
+
       if (this.mode === 'online') {
-        await saveBudgetAction(budget);
+        await saveBudgetAction(budgetToSave);
       } else {
         let updatedBudgets;
-        if ('id' in budget && budget.id) {
-            updatedBudgets = this.budgets.map(b => b.id === budget.id ? budget as Budget : b);
+        if ('id' in budgetToSave && budgetToSave.id) {
+            updatedBudgets = this.budgets.map(b => b.id === budgetToSave.id ? budgetToSave as Budget : b);
         } else {
-            const newBudget = { ...budget, id: `bud_${Date.now()}`, spent: 'spent' in budget ? budget.spent : 0 };
+            const newBudget = { ...budgetToSave, id: `bud_${Date.now()}` };
             updatedBudgets = [newBudget, ...this.budgets];
         }
         this.budgets = updatedBudgets;
@@ -182,5 +196,11 @@ export class AppStore {
       category,
       amount,
     }));
+  }
+
+  get availableBudgetCategories() {
+    const budgetCategories = new Set(this.budgets.map(b => b.category));
+    const transactionCategories = new Set(this.transactions.map(t => t.category));
+    return [...transactionCategories].filter(c => !budgetCategories.has(c) && c !== 'Income');
   }
 }

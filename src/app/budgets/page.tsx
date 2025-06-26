@@ -52,7 +52,7 @@ function BudgetsPage() {
     setSelectedBudget(null);
   };
 
-  const handleSave = async (updatedBudget: Budget | Omit<Budget, "id">) => {
+  const handleSave = async (updatedBudget: Budget | Omit<Budget, "id" | "spent">) => {
     await store.saveBudget(updatedBudget);
     setIsEditDialogOpen(false);
     setSelectedBudget(null);

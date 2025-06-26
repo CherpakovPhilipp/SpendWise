@@ -2,12 +2,12 @@
 "use client";
 
 import * as React from "react";
-import { Monitor, Wifi, WifiOff } from "lucide-react";
+import { observer } from "mobx-react-lite";
+import { Wifi, WifiOff } from "lucide-react";
 import { useApp } from "@/context/AppProvider";
 import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 
-export function ModeSwitcher() {
+export const ModeSwitcher = observer(() => {
   const { mode, setMode } = useApp();
   const isOnline = mode === 'online';
 
@@ -27,4 +27,4 @@ export function ModeSwitcher() {
       <Wifi className={`h-4 w-4 ${!isOnline ? 'text-muted-foreground' : 'text-primary'}`} />
     </div>
   );
-}
+});
