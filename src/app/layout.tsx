@@ -45,17 +45,17 @@ export default function RootLayout({
                         <SpendWiseLogo className="w-6 h-6 text-primary" />
                         <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
                     </Link>
-                    <div className="flex items-center gap-2">
-                      <div className="group-data-[collapsible=icon]:hidden">
-                        <ModeSwitcher />
-                      </div>
-                      <div className="hidden md:block">
-                        <SidebarTrigger />
-                      </div>
+                    <div className="hidden md:block">
+                      <SidebarTrigger />
                     </div>
                 </div>
               </SidebarHeader>
               <SidebarContent>
+                <div className="p-2 group-data-[collapsible=icon]:hidden">
+                    <div className="flex justify-center">
+                        <ModeSwitcher />
+                    </div>
+                </div>
                 <SidebarNav />
               </SidebarContent>
               <SidebarFooter>
