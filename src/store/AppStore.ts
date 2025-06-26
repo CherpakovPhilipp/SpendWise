@@ -22,10 +22,8 @@ export class AppStore {
 
   constructor() {
     makeAutoObservable(this);
-    if (typeof window !== "undefined") {
-      const storedMode = (localStorage.getItem("mode") as "online" | "offline") || "offline";
-      this.setMode(storedMode);
-    }
+    // Do not initialize from localStorage here to prevent hydration mismatch.
+    // The mode is set from the AppProvider after the component mounts.
   }
 
   setMode(mode: "online" | "offline") {

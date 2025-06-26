@@ -17,6 +17,13 @@ export function useApp() {
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const store = React.useRef(new AppStore());
 
+  React.useEffect(() => {
+    // This effect runs only on the client, after the initial render.
+    // It safely reads from localStorage and updates the store.
+    const storedMode = (localStorage.getItem("mode") as "online" | "offline") || "offline";
+    store.current.setMode(storedMode);
+  }, []); // The empty dependency array ensures this runs only once on mount.
+
   return (
     <AppContext.Provider value={store.current}>
       {children}
