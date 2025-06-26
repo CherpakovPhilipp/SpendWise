@@ -43,10 +43,10 @@ export default function RootLayout({
                   <div className="flex w-full items-center justify-between">
                       <Link href="/" className="flex items-center gap-2">
                           <SpendWiseLogo className="w-6 h-6 text-primary" />
-                          <span className="font-semibold text-lg group-data-[state=collapsed]/sidebar:hidden">SpendWise</span>
+                          <span className="font-semibold text-lg">SpendWise</span>
                       </Link>
                   </div>
-                  <div className="flex justify-center pt-2 group-data-[state=collapsed]/sidebar:hidden">
+                  <div className="flex justify-center pt-2">
                       <ModeSwitcher />
                   </div>
                 </SidebarHeader>
