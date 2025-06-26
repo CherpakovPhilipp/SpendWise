@@ -42,7 +42,11 @@ export class AppStore {
       if (this.mode === 'online') {
         const [txs, bgs] = await Promise.all([fetchTransactions(), fetchBudgets()]);
         runInAction(() => {
-          this.transactions = txs.map((t: any) => ({ ...t, amount: Number(t.amount) }));
+          this.transactions = txs.map((t: any) => ({
+            ...t,
+            amount: Number(t.amount),
+            date: format(t.date, "yyyy-MM-dd"),
+          }));
           this.budgets = bgs.map((b: any) => ({ ...b, goal: Number(b.goal), spent: Number(b.spent) }));
         });
       } else {
