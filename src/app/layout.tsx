@@ -1,26 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  LayoutDashboard,
-  List,
-  Target,
-  Settings,
-  Wallet,
-} from "lucide-react";
-
-import {
   SidebarProvider,
   Sidebar,
   SidebarHeader,
   SidebarContent,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
   SidebarInset,
   SidebarFooter,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/toaster";
 import { SpendWiseLogo } from "@/components/icons";
+import { SidebarNav } from "@/components/layout/sidebar-nav";
+import { SidebarFooterNav } from "@/components/layout/sidebar-footer-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -50,36 +41,10 @@ export default function RootLayout({
               </Link>
             </SidebarHeader>
             <SidebarContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton href="/" tooltip="Dashboard" isActive>
-                    <LayoutDashboard />
-                    Dashboard
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton href="#" tooltip="Transactions">
-                    <List />
-                    Transactions
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton href="#" tooltip="Budgets">
-                    <Target />
-                    Budgets
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
+              <SidebarNav />
             </SidebarContent>
             <SidebarFooter>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton href="#" tooltip="Settings">
-                    <Settings />
-                    Settings
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
+              <SidebarFooterNav />
             </SidebarFooter>
           </Sidebar>
           <SidebarInset>

@@ -19,7 +19,16 @@ export const categoryIcons = {
   Income: Landmark,
 };
 
-export const transactions = [
+export type Transaction = {
+  id: string;
+  name: string;
+  category: keyof typeof categoryIcons;
+  date: string;
+  amount: number;
+  type: "expense" | "income";
+};
+
+export const transactions: Transaction[] = [
   {
     id: "txn1",
     name: "Grocery Store",
@@ -99,4 +108,10 @@ export const chartConfig = {
     label: "Amount",
     color: "hsl(var(--primary))",
   },
+  Groceries: { label: "Groceries" },
+  Dining: { label: "Dining" },
+  Transport: { label: "Transport" },
+  Housing: { label: "Housing" },
+  Health: { label: "Health" },
+  Other: { label: "Other" },
 } satisfies ChartConfig;
