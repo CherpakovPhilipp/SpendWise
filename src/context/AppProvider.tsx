@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { format } from "date-fns";
 import {
   fetchTransactions,
   saveTransaction as saveTransactionAction,
@@ -61,7 +62,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         
         const parsedTxs = txs.map((t: any) => ({
           ...t,
-          amount: Number(t.amount)
+          amount: Number(t.amount),
+          date: format(new Date(t.date), 'yyyy-MM-dd'),
         }));
         
         const parsedBgs = bgs.map((b: any) => ({
