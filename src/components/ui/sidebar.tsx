@@ -224,7 +224,7 @@ const Sidebar = React.forwardRef<
         data-state={state}
         {...props}
       >
-        <SidebarTrigger className="hidden md:block absolute top-4 z-50 transition-all data-[state=expanded]:right-4 data-[state=collapsed]:-right-8" />
+        <SidebarTrigger className="hidden md:block absolute top-4 z-50 transition-all data-[state=expanded]:right-0 data-[state=collapsed]:right-0" />
         <div className="flex h-full w-full flex-col group-data-[state=collapsed]/sidebar:hidden">
           {children}
         </div>

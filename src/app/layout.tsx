@@ -46,7 +46,7 @@ export default function RootLayout({
                           <span className="font-semibold text-lg">SpendWise</span>
                       </Link>
                   </div>
-                  <div className="flex justify-center pt-2">
+                  <div className="flex justify-end pt-2">
                       <ModeSwitcher />
                   </div>
                 </SidebarHeader>
