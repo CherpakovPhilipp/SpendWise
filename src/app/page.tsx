@@ -1,13 +1,12 @@
-
 "use client";
 
 import * as React from "react";
 import { observer } from "mobx-react-lite";
 import { Header } from "@/components/dashboard/header";
-import { OverviewCards } from "@/components/dashboard/overview-cards";
-import { SpendingChart } from "@/components/dashboard/spending-chart";
-import { RecentTransactions } from "@/components/dashboard/recent-transactions";
-import { BudgetGoals } from "@/components/dashboard/budget-goals";
+import OverviewCards from "@/components/dashboard/overview-cards";
+import SpendingChart from "@/components/dashboard/spending-chart";
+import RecentTransactions from "@/components/dashboard/recent-transactions";
+import BudgetGoals from "@/components/dashboard/budget-goals";
 import { EditTransactionSheet } from "@/components/transactions/edit-transaction-sheet";
 import { Transaction } from "@/lib/definitions";
 import { useApp } from "@/context/AppProvider";
