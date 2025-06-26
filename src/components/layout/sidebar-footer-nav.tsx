@@ -16,18 +16,16 @@ export function SidebarFooterNav() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
-        <Link href="/settings" legacyBehavior passHref>
-          <SidebarMenuButton
-            asChild
-            tooltip="Settings"
-            isActive={pathname === "/settings"}
-          >
-            <a>
-              <Settings />
-              <span>Settings</span>
-            </a>
-          </SidebarMenuButton>
-        </Link>
+        <SidebarMenuButton
+          asChild
+          tooltip="Settings"
+          isActive={pathname === "/settings"}
+        >
+          <Link href="/settings">
+            <Settings />
+            <span>Settings</span>
+          </Link>
+        </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
   );
