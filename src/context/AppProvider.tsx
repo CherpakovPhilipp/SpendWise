@@ -58,8 +58,20 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     try {
       if (mode === 'online') {
         const [txs, bgs] = await Promise.all([fetchTransactions(), fetchBudgets()]);
-        setTransactions(txs);
-        setBudgets(bgs);
+        
+        const parsedTxs = txs.map((t: any) => ({
+          ...t,
+          amount: Number(t.amount)
+        }));
+        
+        const parsedBgs = bgs.map((b: any) => ({
+          ...b,
+          spent: Number(b.spent),
+          goal: Number(b.goal),
+        }));
+
+        setTransactions(parsedTxs);
+        setBudgets(parsedBgs);
       } else {
         const localTxs = JSON.parse(localStorage.getItem('transactions') || 'null') || mockTransactions;
         const localBudgets = JSON.parse(localStorage.getItem('budgets') || 'null') || mockBudgets;
