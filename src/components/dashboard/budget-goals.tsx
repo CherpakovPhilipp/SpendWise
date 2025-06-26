@@ -1,6 +1,7 @@
 
 "use client";
 
+import { observer } from "mobx-react-lite";
 import {
   Card,
   CardContent,
@@ -12,8 +13,8 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { useApp } from "@/context/AppProvider";
 
-export function BudgetGoals() {
-  const { budgets } = useApp();
+function BudgetGoals() {
+  const store = useApp();
 
   return (
     <Card className="h-full">
@@ -24,7 +25,7 @@ export function BudgetGoals() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {budgets.slice(0, 4).map((goal) => {
+        {store.budgets.slice(0, 4).map((goal) => {
           const progress = (goal.spent / goal.goal) * 100;
           return (
             <div key={goal.category} className="grid gap-2">
@@ -43,3 +44,5 @@ export function BudgetGoals() {
     </Card>
   );
 }
+
+export default observer(BudgetGoals);

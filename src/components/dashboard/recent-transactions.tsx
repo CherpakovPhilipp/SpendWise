@@ -1,5 +1,8 @@
 
+"use client";
+
 import Link from "next/link";
+import { observer } from "mobx-react-lite";
 import { ArrowUpRight } from "lucide-react";
 import {
   Card,
@@ -20,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Transaction, categoryIcons } from "@/data/mock";
 
-export function RecentTransactions({
+function RecentTransactions({
   transactions,
 }: {
   transactions: Transaction[];
@@ -95,3 +98,5 @@ export function RecentTransactions({
     </Card>
   );
 }
+
+export default observer(RecentTransactions);

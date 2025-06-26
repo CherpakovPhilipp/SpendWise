@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { observer } from "mobx-react-lite";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BudgetsTable } from "@/components/budgets/budgets-table";
@@ -21,8 +22,8 @@ import { useApp } from "@/context/AppProvider";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
-export default function BudgetsPage() {
-  const { budgets, saveBudget, deleteBudget, loading } = useApp();
+function BudgetsPage() {
+  const store = useApp();
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [selectedBudget, setSelectedBudget] =
@@ -45,14 +46,14 @@ export default function BudgetsPage() {
 
   const confirmDelete = async () => {
     if (selectedBudget) {
-      await deleteBudget(selectedBudget.id);
+      await store.deleteBudget(selectedBudget.id);
     }
     setIsDeleteDialogOpen(false);
     setSelectedBudget(null);
   };
 
   const handleSave = async (updatedBudget: Budget | Omit<Budget, "id">) => {
-    await saveBudget(updatedBudget);
+    await store.saveBudget(updatedBudget);
     setIsEditDialogOpen(false);
     setSelectedBudget(null);
   };
@@ -62,7 +63,7 @@ export default function BudgetsPage() {
     setSelectedBudget(null);
   };
 
-  if (loading) {
+  if (store.loading) {
       return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
             <div className="flex items-center">
@@ -99,7 +100,7 @@ export default function BudgetsPage() {
           </div>
         </div>
         <BudgetsTable
-          budgets={budgets}
+          budgets={store.budgets}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
@@ -132,3 +133,5 @@ export default function BudgetsPage() {
     </>
   );
 }
+
+export default observer(BudgetsPage);

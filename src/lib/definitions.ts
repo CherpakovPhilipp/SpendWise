@@ -19,12 +19,15 @@ export const categoryIcons = {
   Shopping: Target,
   Other: Receipt,
   Income: Landmark,
+  Entertainment: UtensilsCrossed,
+  "Personal Care": HeartPulse,
+  Education: Landmark,
 };
 
 export type Transaction = {
   id: string;
   name: string;
-  category: keyof typeof categoryIcons;
+  category: string;
   date: string;
   amount: number;
   type: "expense" | "income";

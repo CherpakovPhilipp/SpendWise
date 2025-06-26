@@ -1,3 +1,7 @@
+
+"use client";
+
+import { observer } from "mobx-react-lite";
 import {
   Card,
   CardContent,
@@ -5,8 +9,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DollarSign, Landmark, Receipt } from "lucide-react";
+import { useApp } from "@/context/AppProvider";
 
-export function OverviewCards() {
+function OverviewCards() {
+  const store = useApp();
+  
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
+  };
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <Card>
@@ -15,8 +29,8 @@ export function OverviewCards() {
           <Landmark className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">$15,231.89</div>
-          <p className="text-xs text-muted-foreground">+20.1% from last month</p>
+          <div className="text-2xl font-bold">{formatCurrency(store.totalBalance)}</div>
+          <p className="text-xs text-muted-foreground">Calculated from all transactions</p>
         </CardContent>
       </Card>
       <Card>
@@ -25,8 +39,8 @@ export function OverviewCards() {
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">$4,231.89</div>
-          <p className="text-xs text-muted-foreground">This month</p>
+          <div className="text-2xl font-bold">{formatCurrency(store.totalIncome)}</div>
+          <p className="text-xs text-muted-foreground">Total income received</p>
         </CardContent>
       </Card>
       <Card>
@@ -35,10 +49,12 @@ export function OverviewCards() {
           <Receipt className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">-$2,500.50</div>
-          <p className="text-xs text-muted-foreground">This month</p>
+          <div className="text-2xl font-bold">{formatCurrency(store.totalExpenses)}</div>
+          <p className="text-xs text-muted-foreground">Total expenses paid</p>
         </CardContent>
       </Card>
     </div>
   );
 }
+
+export default observer(OverviewCards);

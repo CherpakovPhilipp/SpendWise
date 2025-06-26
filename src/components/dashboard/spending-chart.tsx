@@ -2,7 +2,9 @@
 "use client";
 
 import * as React from "react";
+import { observer } from "mobx-react-lite";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
+import { format, subMonths } from "date-fns";
 import {
   Card,
   CardContent,
@@ -14,11 +16,33 @@ import {
   ChartContainer,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { chartData, chartConfig } from "@/data/mock";
+import { useApp } from "@/context/AppProvider";
+import { chartConfig } from "@/data/mock";
 
-export function SpendingChart() {
+function SpendingChart() {
+  const store = useApp();
   const [chartType, setChartType] = React.useState("bar");
+
+  const last12Months = React.useMemo(() => {
+    const months = [];
+    const today = new Date();
+    for (let i = 0; i < 12; i++) {
+      months.push(subMonths(today, i));
+    }
+    return months;
+  }, []);
+  
+  const [month, setMonth] = React.useState(format(last12Months[0], "yyyy-MM-dd"));
+
+  const chartData = store.getSpendingForMonth(month);
 
   const renderCustomPieLabel = (props: any) => {
     const { cx, cy, midAngle, innerRadius, outerRadius, percent, index, name } = props;
@@ -52,71 +76,92 @@ export function SpendingChart() {
 
   return (
     <Card className="h-full">
-      <CardHeader className="flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex-col items-start gap-4 space-y-0 pb-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <CardTitle>Spending by Category</CardTitle>
           <CardDescription>
-            View your spending by category as a bar or pie chart.
+            View your spending by category for a selected month.
           </CardDescription>
         </div>
-        <Tabs defaultValue="bar" onValueChange={setChartType} className="w-auto">
-          <TabsList>
-            <TabsTrigger value="bar">Bar</TabsTrigger>
-            <TabsTrigger value="pie">Pie</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="flex items-center gap-2">
+            <Select value={month} onValueChange={setMonth}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select month" />
+                </SelectTrigger>
+                <SelectContent>
+                    {last12Months.map(m => (
+                        <SelectItem key={m.toISOString()} value={format(m, "yyyy-MM-dd")}>
+                            {format(m, "MMMM yyyy")}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+            <Tabs defaultValue="bar" onValueChange={setChartType} className="w-auto">
+                <TabsList>
+                    <TabsTrigger value="bar">Bar</TabsTrigger>
+                    <TabsTrigger value="pie">Pie</TabsTrigger>
+                </TabsList>
+            </Tabs>
+        </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            {chartType === 'bar' ? (
-              <BarChart data={chartData} accessibilityLayer>
-                <XAxis
-                  dataKey="category"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
-                />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => `$${value}`}
-                />
-                 <Tooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="dot" />}
-                />
-                <Bar dataKey="amount" fill="hsl(var(--primary))" radius={8} />
-              </BarChart>
-            ) : (
-              <PieChart margin={{ top: 30, right: 50, bottom: 30, left: 50 }}>
-                <Pie
-                  data={chartData}
-                  dataKey="amount"
-                  nameKey="category"
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={90}
-                  labelLine={false}
-                  label={renderCustomPieLabel}
-                >
-                  {chartData.map((entry, index) => (
-                     <Cell
-                      key={`cell-${entry.category}`}
-                      fill={`hsl(var(--chart-${(index % 5) + 1}))`}
-                      className="stroke-background hover:opacity-80"
-                    />
-                  ))}
-                </Pie>
-                <Tooltip content={<ChartTooltipContent nameKey="category" indicator="dot" />} />
-                <Legend />
-              </PieChart>
-            )}
-          </ResponsiveContainer>
-        </ChartContainer>
+        {chartData.length === 0 ? (
+          <div className="flex h-[300px] w-full items-center justify-center text-muted-foreground">
+            No spending data for this month.
+          </div>
+        ) : (
+          <ChartContainer config={chartConfig} className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              {chartType === 'bar' ? (
+                <BarChart data={chartData} accessibilityLayer>
+                  <XAxis
+                    dataKey="category"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => value.slice(0, 3)}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => `$${value}`}
+                  />
+                  <Tooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="dot" />}
+                  />
+                  <Bar dataKey="amount" fill="hsl(var(--primary))" radius={8} />
+                </BarChart>
+              ) : (
+                <PieChart margin={{ top: 30, right: 50, bottom: 30, left: 50 }}>
+                  <Pie
+                    data={chartData}
+                    dataKey="amount"
+                    nameKey="category"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={90}
+                    labelLine={false}
+                    label={renderCustomPieLabel}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${entry.category}`}
+                        fill={`hsl(var(--chart-${(index % 5) + 1}))`}
+                        className="stroke-background hover:opacity-80"
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<ChartTooltipContent nameKey="category" indicator="dot" />} />
+                  <Legend />
+                </PieChart>
+              )}
+            </ResponsiveContainer>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );
 }
+export default observer(SpendingChart);

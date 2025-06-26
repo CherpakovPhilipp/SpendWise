@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { observer } from "mobx-react-lite";
 import { PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TransactionsTable } from "@/components/transactions/transactions-table";
@@ -20,8 +21,8 @@ import { Transaction } from "@/lib/definitions";
 import { useApp } from "@/context/AppProvider";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TransactionsPage() {
-  const { transactions, saveTransaction, deleteTransaction, loading } = useApp();
+function TransactionsPage() {
+  const store = useApp();
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = React.useState(false);
   const [selectedTransaction, setSelectedTransaction] =
@@ -44,14 +45,14 @@ export default function TransactionsPage() {
 
   const confirmDelete = async () => {
     if (selectedTransaction) {
-      await deleteTransaction(selectedTransaction.id);
+      await store.deleteTransaction(selectedTransaction.id);
     }
     setIsDeleteDialogOpen(false);
     setSelectedTransaction(null);
   };
 
   const handleSave = async (data: Transaction | Omit<Transaction, "id">) => {
-    await saveTransaction(data);
+    await store.saveTransaction(data);
     setIsEditDialogOpen(false);
     setSelectedTransaction(null);
   };
@@ -61,7 +62,7 @@ export default function TransactionsPage() {
     setSelectedTransaction(null);
   };
 
-  if (loading) {
+  if (store.loading) {
       return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
             <div className="flex items-center">
@@ -98,7 +99,7 @@ export default function TransactionsPage() {
           </div>
         </div>
         <TransactionsTable
-          transactions={transactions}
+          transactions={store.transactions}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
@@ -131,3 +132,5 @@ export default function TransactionsPage() {
     </>
   );
 }
+
+export default observer(TransactionsPage);

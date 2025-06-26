@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { observer } from "mobx-react-lite";
 import { Header } from "@/components/dashboard/header";
 import { OverviewCards } from "@/components/dashboard/overview-cards";
 import { SpendingChart } from "@/components/dashboard/spending-chart";
@@ -12,8 +13,8 @@ import { Transaction } from "@/lib/definitions";
 import { useApp } from "@/context/AppProvider";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Home() {
-  const { transactions, saveTransaction, loading } = useApp();
+function Home() {
+  const store = useApp();
   const [isEditDialogOpen, setIsEditDialogOpen] = React.useState(false);
   const [selectedTransaction, setSelectedTransaction] =
     React.useState<Transaction | null>(null);
@@ -24,7 +25,7 @@ export default function Home() {
   };
 
   const handleSave = async (updatedTransaction: Transaction | Omit<Transaction, "id">) => {
-    await saveTransaction(updatedTransaction);
+    await store.saveTransaction(updatedTransaction);
     setIsEditDialogOpen(false);
     setSelectedTransaction(null);
   };
@@ -34,7 +35,7 @@ export default function Home() {
     setSelectedTransaction(null);
   };
 
-  if (loading) {
+  if (store.loading) {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
             <div className="flex items-center justify-between">
@@ -64,7 +65,7 @@ export default function Home() {
   return (
     <>
       <div className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6 lg:p-8">
-        <Header onAdd={handleAdd} transactions={transactions} />
+        <Header onAdd={handleAdd} transactions={store.transactions} />
         <div className="grid gap-6 md:gap-8">
           <OverviewCards />
           <div className="grid grid-cols-1 items-start gap-6 md:gap-8 lg:grid-cols-3">
@@ -75,7 +76,7 @@ export default function Home() {
               <BudgetGoals />
             </div>
           </div>
-          <RecentTransactions transactions={transactions} />
+          <RecentTransactions transactions={store.transactions} />
         </div>
       </div>
       <EditTransactionSheet
@@ -87,3 +88,5 @@ export default function Home() {
     </>
   );
 }
+
+export default observer(Home);
