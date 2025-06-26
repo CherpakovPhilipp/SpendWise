@@ -40,7 +40,7 @@ export default function RootLayout({
             <div className="flex min-h-screen w-full bg-background">
               <Sidebar>
                 <SidebarHeader className="p-2">
-                  <div className="flex w-full items-center">
+                  <div className="flex w-full items-center justify-between">
                       <Link href="/" className="flex items-center gap-2">
                           <SpendWiseLogo className="w-6 h-6 text-primary" />
                           <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
@@ -58,18 +58,12 @@ export default function RootLayout({
                 </SidebarFooter>
               </Sidebar>
               <div className="flex flex-1 flex-col">
-                <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-inherit px-4">
-                    <div className="flex items-center gap-2">
-                        <SidebarTrigger className="hidden md:block" />
-                        <Link href="/" className="flex items-center gap-2 font-semibold md:hidden">
-                            <SpendWiseLogo className="h-6 w-6 text-primary" />
-                            <span className="text-lg font-semibold">SpendWise</span>
-                        </Link>
-                    </div>
-
-                    <div className="md:hidden">
-                        <SidebarTrigger />
-                    </div>
+                <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-inherit px-4 md:hidden">
+                    <Link href="/" className="flex items-center gap-2 font-semibold">
+                        <SpendWiseLogo className="h-6 w-6 text-primary" />
+                        <span className="text-lg font-semibold">SpendWise</span>
+                    </Link>
+                    <SidebarTrigger />
                 </header>
                 <main className="flex-1">
                   {children}

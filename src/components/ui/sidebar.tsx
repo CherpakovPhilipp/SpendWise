@@ -24,7 +24,7 @@ const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
 const SIDEBAR_WIDTH = "16rem"
 const SIDEBAR_WIDTH_MOBILE = "18rem"
-const SIDEBAR_WIDTH_ICON = "3rem"
+const SIDEBAR_WIDTH_ICON = "3.5rem" 
 const SIDEBAR_KEYBOARD_SHORTCUT = "b"
 
 type SidebarContext = {
@@ -217,20 +217,14 @@ const Sidebar = React.forwardRef<
       <div
         ref={ref}
         className={cn(
-          "group hidden text-sidebar-foreground md:flex md:flex-col",
-          "duration-200 relative h-svh w-[--sidebar-width] bg-sidebar transition-[width] ease-linear border-r",
-          "group-data-[collapsible=offcanvas]:w-0",
-          "group-data-[side=right]:rotate-180",
-          variant === "floating" || variant === "inset"
-            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)_+_theme(spacing.4))]"
-            : "group-data-[collapsible=icon]:w-[--sidebar-width-icon]"
+          "group/sidebar hidden text-sidebar-foreground md:flex md:flex-col",
+          "sticky top-0 z-20 duration-200 h-screen w-[--sidebar-width] bg-sidebar transition-[width] ease-linear border-r",
+          "data-[state=collapsed]:w-[--sidebar-width-icon]"
         )}
         data-state={state}
-        data-collapsible={state === "collapsed" ? collapsible : ""}
-        data-variant={variant}
-        data-side={side}
         {...props}
       >
+        <SidebarTrigger className="hidden md:block absolute top-4 z-50 transition-all data-[state=expanded]:right-4 data-[state=collapsed]:-right-8" />
         {children}
       </div>
     )
@@ -249,9 +243,10 @@ const SidebarTrigger = React.forwardRef<
     <Button
       ref={ref}
       data-sidebar="trigger"
+      data-state={state}
       variant="ghost"
       size="icon"
-      className={cn("h-7 w-7", className)}
+      className={cn("h-8 w-8", className)}
       onClick={(event) => {
         onClick?.(event)
         toggleSidebar()
