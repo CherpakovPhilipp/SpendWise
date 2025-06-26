@@ -16,21 +16,16 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { chartData, chartConfig } from "@/data/mock";
 
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
-  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-  const x = cx + radius * Math.cos(-midAngle * RADIAN);
-  const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-  return (
-    <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" className="text-xs font-bold">
-      {`${(percent * 100).toFixed(0)}%`}
-    </text>
-  );
-};
-
 export function SpendingChart() {
   const [chartType, setChartType] = React.useState("bar");
+
+  const renderCustomPieLabel = (props: any) => {
+    const { name, percent } = props;
+    if (percent < 0.04) {
+      return null;
+    }
+    return `${name} (${(percent * 100).toFixed(0)}%)`;
+  };
 
   return (
     <Card>
@@ -76,16 +71,26 @@ export function SpendingChart() {
               <PieChart>
                 <Pie
                   data={chartData}
+                  dataKey="amount"
+                  nameKey="category"
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
-                  label={renderCustomizedLabel}
-                  outerRadius={120}
-                  fill="#8884d8"
-                  dataKey="amount"
+                  outerRadius={90}
+                  labelLine={{
+                    stroke: "hsl(var(--muted-foreground))",
+                    strokeWidth: 1,
+                  }}
+                  label={renderCustomPieLabel}
                 >
-                  {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${(index % 5) + 1}))`} />
+                  {chartData.map((entry) => (
+                    <Cell
+                      key={`cell-${entry.category}`}
+                      fill={
+                        chartConfig[entry.category as keyof typeof chartConfig]
+                          ?.color
+                      }
+                      className="stroke-background hover:opacity-80"
+                    />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltipContent nameKey="category" indicator="dot" />} />
