@@ -40,14 +40,14 @@ export default function RootLayout({
           <SidebarProvider>
             <Sidebar>
               <SidebarHeader className="p-2">
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full items-center justify-between group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-4">
                     <Link href="/" className="flex items-center gap-2">
                         <SpendWiseLogo className="w-6 h-6 text-primary" />
                         <span className="font-semibold text-lg group-data-[collapsible=icon]:hidden">SpendWise</span>
                     </Link>
                     <SidebarTrigger className="hidden md:block" />
                 </div>
-                <div className="flex justify-end group-data-[collapsible=icon]:hidden">
+                <div className="flex justify-center pt-2 group-data-[collapsible=icon]:hidden">
                     <ModeSwitcher />
                 </div>
               </SidebarHeader>
