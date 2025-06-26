@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import {
@@ -17,9 +18,13 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { transactions, categoryIcons } from "@/data/mock";
+import { Transaction, categoryIcons } from "@/data/mock";
 
-export function RecentTransactions() {
+export function RecentTransactions({
+  transactions,
+}: {
+  transactions: Transaction[];
+}) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center">

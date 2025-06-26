@@ -1,3 +1,4 @@
+
 import {
   ShoppingCart,
   UtensilsCrossed,
@@ -6,6 +7,7 @@ import {
   HeartPulse,
   Receipt,
   Landmark,
+  Target,
 } from "lucide-react";
 import type { ChartConfig } from "@/components/ui/chart";
 
@@ -15,6 +17,7 @@ export const categoryIcons = {
   Transport: Car,
   Housing: Home,
   Health: HeartPulse,
+  Shopping: Target,
   Other: Receipt,
   Income: Landmark,
 };
@@ -87,11 +90,24 @@ export const transactions: Transaction[] = [
   },
 ];
 
-export const budgetGoals = [
-  { category: "Dining", spent: 350.75, goal: 500 },
-  { category: "Groceries", spent: 210.5, goal: 400 },
-  { category: "Transport", spent: 95.0, goal: 150 },
-  { category: "Shopping", spent: 450.0, goal: 300 },
+export type Budget = {
+  id: string;
+  category: string;
+  spent: number;
+  goal: number;
+};
+
+export const budgets: Budget[] = [
+  { id: "bud1", category: "Dining", spent: 350.75, goal: 500 },
+  { id: "bud2", category: "Groceries", spent: 210.5, goal: 400 },
+  { id: "bud3", category: "Transport", spent: 95.0, goal: 150 },
+  { id: "bud4", category: "Shopping", spent: 450.0, goal: 300 },
+  { id: "bud5", category: "Health", spent: 50.0, goal: 100 },
+  { id: "bud6", category: "Housing", spent: 1200.0, goal: 1200 },
+  { id: "bud7", category: "Other", spent: 75.0, goal: 200 },
+  { id: "bud8", category: "Entertainment", spent: 120.0, goal: 150 },
+  { id: "bud9", category: "Personal Care", spent: 40.0, goal: 75 },
+  { id: "bud10", category: "Education", spent: 200.0, goal: 200 },
 ];
 
 export const chartData = [

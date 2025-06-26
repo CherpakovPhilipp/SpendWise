@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -7,11 +8,11 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
-import { budgetGoals } from "@/data/mock";
+import { budgets } from "@/data/mock";
 
 export function BudgetGoals() {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
         <CardTitle>Budget Goals</CardTitle>
         <CardDescription>
@@ -19,7 +20,7 @@ export function BudgetGoals() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-4">
-        {budgetGoals.map((goal) => {
+        {budgets.slice(0, 4).map((goal) => {
           const progress = (goal.spent / goal.goal) * 100;
           return (
             <div key={goal.category} className="grid gap-2">
